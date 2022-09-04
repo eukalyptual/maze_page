@@ -133,7 +133,7 @@ function start_box() {
 	c.fillStyle = "rgba(0, 255, 125, 1)";
 	c.fillRect(px(0), py(0), boxX, boxY);
 	c.fillStyle = "rgba(0, 0, 0, 1)";
-	c.font = "20px Arial";
+	c.font = boxY/2.75 + "px Arial";
 	c.fillText("Start", px(0.1), py(0.6), boxX);
 }
 
@@ -214,7 +214,7 @@ canvas.addEventListener("click",
 		var y = event.offsetY;
 		for (let i in edges) {
 			let edge = edges[i];
-			if (!edge.border) {
+			if (!edge.outer) {
 				if (edges[i].area.on([x, y])) {
 					// console.log(i)
 					if (!edges[i].show) { edges[i].draw(); }

@@ -9,5 +9,7 @@
 
 .heading{
 	text-align: center;
-	margin: 10px
+	margin: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }

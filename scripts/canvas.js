@@ -1,5 +1,3 @@
-// console.log("canvas.js loaded");
-
 var canvas = document.querySelector('canvas');
 var mazeX = 10;
 var mazeY = 10;
@@ -10,13 +8,26 @@ if (window.innerWidth < window.innerHeight) {
 
 canvas.width = ca * 1.025;
 canvas.height = ca * 1.025;
-var margin = ((window.innerWidth - ca) / 2);
-canvas.style.marginLeft = margin + "px";
-canvas.style.marginRight = margin + "px";
+// var margin = ((window.innerWidth/2 - ca) / 2);
+// canvas.style.marginLeft = margin + "px";
+// canvas.style.marginRight = margin + "px";
 
 var boxX = ca / mazeX;
 var boxY = ca / mazeY;
 var c = canvas.getContext('2d');
+
+
+
+
+var mode = false
+var start = "V_0_0";
+var end = "";
+
+var vertices = {};
+var edges = {};
+var boxes = {};
+
+
 
 class Vertex {
 	constructor(x, y, radius) {
@@ -35,18 +46,26 @@ class Vertex {
 
 class Box {
 	constructor(x, y, width, height) {
+		// console.log(x, y, width, height)
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		this.is_end = false;
 	}
 
 	draw() {
-		c.beginPath();
-		c.rect(this.x, this.y, this.width, this.height);
-		c.stroke();
-		c.fill();
+		c.strokeRect(this.x, this.y, this.width, this.height);
 	};
+
+	make_end() {
+		this.is_end = true;
+		c.fillStyle = "rgba(255, 0, 0, 0.9)";
+		c.fillRect(this.x, this.y, this.width, this.height);
+		c.fillStyle = "rgba(255, 255, 255, 1)";
+		// c.font = boxY / 2.75 + "px Arial";
+		c.fillText("End", this.x+px(0.05), this.y+py(0.5), boxX);
+	}
 }
 
 class st_line {
@@ -119,10 +138,6 @@ function pxinv(x) { return (x - ca * 0.0125) / boxX }
 function pyinv(x) { return (x - ca * 0.0125) / boxY }
 // c.fillRect(100, 100, 100, 100);
 
-var vertices = {};
-var edges = {};
-var boxes = {};
-
 // function sleep(ms) {
 // 	return new Promise(
 // 	  resolve => setTimeout(resolve, ms)
@@ -133,19 +148,23 @@ function start_box() {
 	c.fillStyle = "rgba(0, 255, 125, 1)";
 	c.fillRect(px(0), py(0), boxX, boxY);
 	c.fillStyle = "rgba(0, 0, 0, 1)";
-	c.font = boxY/2.75 + "px Arial";
+	c.font = boxY / 2.75 + "px Arial";
 	c.fillText("Start", px(0.1), py(0.6), boxX);
 }
+
+// function end_box()
 
 function draw_guide_boxes_vertices(v) {
 	c.strokeStyle = "rgba(0, 0, 0, 0.1)";
 	for (let i = 0; i < mazeX + 1; i++) {
 		for (let j = 0; j < mazeY + 1; j++) {
 			if (mazeX - i && mazeY - j) {
-				c.strokeRect(px(i), py(j), boxX, boxY);
+				b = new Box(px(i), py(j), boxX, boxY);
+				b.draw();
+				boxes["B_" + i + "_" + j] = b;
 			};
-			cn = new Vertex(px(i), py(j), Math.min(boxX, boxY) / 15);
-			if(v){vertices["V_" + i + "_" + j] = cn;};
+			cn = new Vertex(px(i), py(j), Math.min(boxX, boxY) / 100);
+			if (v) { vertices["V_" + i + "_" + j] = cn; };
 			cn.draw();
 		}
 	}
@@ -184,6 +203,7 @@ function reset() {
 	start_box();
 	draw_guide_boxes_vertices(true);
 	draw_edges();
+	edges["E[V_1_0][V_1_1]"].draw();
 }
 
 function rebuild() {
@@ -194,37 +214,73 @@ function rebuild() {
 
 	c.strokeStyle = "rgba(0, 0, 0, 1)";
 	for (var i in edges) {
-		if(edges[i].show){
+		if (edges[i].show) {
 			edges[i].draw();
 		}
 	}
 }
 
+///////////////////////////////////////////
+// start calling the functions from here // 
+///////////////////////////////////////////
+
+
 reset();
 
-console.log(Object.keys(edges).length);
-
-// console.log(new Area([0, 0], [0, 1]).in([0.001, 0.99]));
+// console.log(boxes)
+// console.log(boxes["B_0_0"].x == px(0) && boxes["B_0_0"].y == py(0))
+// console.log(Object.keys(boxes).length)
 
 canvas.addEventListener("click",
 	function (event) {
-		// console.log(event);
-		// console.log(event.x, event.y);
 		var x = event.offsetX;
 		var y = event.offsetY;
-		for (let i in edges) {
-			let edge = edges[i];
-			if (!edge.outer) {
-				if (edges[i].area.on([x, y])) {
-					// console.log(i)
-					if (!edges[i].show) { edges[i].draw(); }
-					else {
-						edges[i].show = false;
-						rebuild();
-					}
-				}
+		if (mode) {
+			if (end != "") {
+				rebuild();
+				boxes[end].is_end = false;
+			}
 
+			end = "B_" + Math.floor(pxinv(x)) + "_" + Math.floor(pxinv(y))
+			// console.log(end)
+			// console.log(boxes)
+			boxes[end].make_end();
+		}
+		else {
+			for (let i in edges) {
+				let edge = edges[i];
+				if (!edge.outer) {
+					if (edges[i].area.on([x, y])) {
+						if (!edges[i].show) { edges[i].draw(); }
+						else {
+							edges[i].show = false;
+							rebuild();
+							if(end!=""){
+								// console.log("hia ",boxes[end])
+								boxes[end].make_end();
+							}
+						}
+					}
+
+				}
 			}
 		}
 	}
 );
+
+var end_toggle_button = document.getElementById("put_end")
+end_toggle_button.addEventListener("click",
+	function () {
+		// end_toggle_button.classList.toggle("btn-primary");
+		if(mode){
+			end_toggle_button.classList.remove("btn-primary");
+			end_toggle_button.classList.add("btn-outline-primary");
+		}
+		else{
+			end_toggle_button.classList.remove("btn-outline-primary");
+			end_toggle_button.classList.add("btn-primary");
+		}
+		mode = !mode
+	}
+);
+

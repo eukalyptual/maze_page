@@ -1,10 +1,11 @@
 var canvas = document.querySelector('canvas');
 var mazeX = 10;
 var mazeY = 10;
-var ca = window.innerHeight * 0.8
-if (window.innerWidth < window.innerHeight) {
-	ca = window.innerWidth * 0.8
-}
+var ca = Math.min(window.innerHeight, window.innerWidth) * 0.8
+console.log(ca)
+// if (window.innerWidth < window.innerHeight) {
+// 	ca = window.innerWidth * 0.8
+// }
 
 canvas.width = ca * 1.025;
 canvas.height = ca * 1.025;
@@ -20,7 +21,7 @@ var c = canvas.getContext('2d');
 
 
 var mode = false
-var start = "V_0_0";
+var start = "B_0_0";
 var end = "";
 
 var vertices = {};
@@ -64,7 +65,7 @@ class Box {
 		c.fillRect(this.x, this.y, this.width, this.height);
 		c.fillStyle = "rgba(255, 255, 255, 1)";
 		// c.font = boxY / 2.75 + "px Arial";
-		c.fillText("End", this.x+px(0.05), this.y+py(0.5), boxX);
+		c.fillText("End", this.x + px(0.05), this.y + py(0.5), boxX);
 	}
 }
 
@@ -200,6 +201,10 @@ function draw_edges() {
 }
 
 function reset() {
+	c.clearRect(0, 0, ca * 1.025, ca * 1.025);
+	vertices = {};
+	edges = {};
+	boxes = {};
 	start_box();
 	draw_guide_boxes_vertices(true);
 	draw_edges();
@@ -220,31 +225,70 @@ function rebuild() {
 	}
 }
 
-///////////////////////////////////////////
-// start calling the functions from here // 
+function get_state() {
+	edges_ = {};
+	for (var i in edges) {
+		if (edges[i].show) {
+			edges_[i] = 1;
+		}
+		else {
+			edges_[i] = 0;
+		}
+	}
+	return { edges: edges_, end: end };
+}
+
+function get_evaluated() {
+	if (end == "") {
+		alert("You need to set an end point before submission!");
+	}
+	else {
+		let url = "/evaluate";
+		let dataSend = get_state();
+		let xml = new XMLHttpRequest();
+		xml.open("POST", url, true);
+		xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xml.onload = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				console.log(this.responseText);
+			}
+		}
+		xml.send(JSON.stringify(dataSend));
+	}
+}
+
+function toggle_end_button() {
+	let end_toggle_button = document.getElementById("put_end");
+	if (mode) {
+		end_toggle_button.innerHTML = "Set End Position";
+	}
+	else {
+		end_toggle_button.innerHTML = "&emsp;Put Barriers&emsp;";
+	}
+	mode = !mode
+}
+
+/////////////////////////////////////////////
+/// start calling the functions from here // 
 ///////////////////////////////////////////
 
 
 reset();
-
-// console.log(boxes)
-// console.log(boxes["B_0_0"].x == px(0) && boxes["B_0_0"].y == py(0))
-// console.log(Object.keys(boxes).length)
 
 canvas.addEventListener("click",
 	function (event) {
 		var x = event.offsetX;
 		var y = event.offsetY;
 		if (mode) {
-			if (end != "") {
-				rebuild();
-				boxes[end].is_end = false;
-			}
-
-			end = "B_" + Math.floor(pxinv(x)) + "_" + Math.floor(pxinv(y))
-			// console.log(end)
-			// console.log(boxes)
-			boxes[end].make_end();
+			endnew = "B_" + Math.floor(pxinv(x)) + "_" + Math.floor(pxinv(y));
+			if (endnew != start) {
+				if (end != "") {
+					rebuild();
+					boxes[end].is_end = false;
+				}
+				end = endnew;
+				boxes[end].make_end();
+			};
 		}
 		else {
 			for (let i in edges) {
@@ -255,8 +299,7 @@ canvas.addEventListener("click",
 						else {
 							edges[i].show = false;
 							rebuild();
-							if(end!=""){
-								// console.log("hia ",boxes[end])
+							if (end != "") {
 								boxes[end].make_end();
 							}
 						}
@@ -268,19 +311,11 @@ canvas.addEventListener("click",
 	}
 );
 
-var end_toggle_button = document.getElementById("put_end")
-end_toggle_button.addEventListener("click",
-	function () {
-		// end_toggle_button.classList.toggle("btn-primary");
-		if(mode){
-			end_toggle_button.classList.remove("btn-primary");
-			end_toggle_button.classList.add("btn-outline-primary");
-		}
-		else{
-			end_toggle_button.classList.remove("btn-outline-primary");
-			end_toggle_button.classList.add("btn-primary");
-		}
-		mode = !mode
-	}
-);
+document.getElementById("put_end").addEventListener("click", toggle_end_button);
+
+document.getElementById("reset").addEventListener("click", reset);
+
+document.getElementById("send").addEventListener("click", get_evaluated)
+
+// get_evaluated(get_state(), "/evaluate");
 

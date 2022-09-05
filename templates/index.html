@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Build Maze</title>
+	<link rel="stylesheet" href="/static/styles/style.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+
+<body>
+	<h1 class="heading">Build Maze</h1>
+
+	<div class="row">
+		<div class="col text-center">
+			<canvas></canvas>
+		</div>
+		<div class="col text-center">
+			<div class="row">
+				<div class="col">
+					<button type="button" class="btn btn-primary" id="put_end">Set End Position</button>
+				</div>
+				<div class="col">
+					<button type="button" class="btn btn-success" data-bs-toggle="modal"
+						data-bs-target="#exampleModal2">Evaluate</button>
+				</div>
+				<div class="col">
+					<button type="button" class="btn btn-danger" data-bs-toggle="modal"
+						data-bs-target="#exampleModal1">Reset</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 1 -->
+	<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModal1Label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModal1Label">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Do you really want to reset the maze? All the edges and the end position will be removed.
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="reset">Reset
+						Workspace</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal 2 -->
+	<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModal2Label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModal2Label">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					This will send the current maze for evaluation to the backend.
+					<br><br>
+					Please make sure the following things have been done before submission to evade errors:
+					<ul>
+						<li>End position has been set.</li>
+						<li>There is atleast one valid path from "Start" to "End".</li>
+					</ul>
+
+					Do you want to continue?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-success" data-bs-dismiss="modal" id="send">Send</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+		crossorigin="anonymous"></script>
+	<script src="/static/scripts/canvas.js"></script>
+</body>
+
+</html>

@@ -265,6 +265,15 @@ function get_evaluated() {
 	}
 }
 
+function download_maze(){
+	data = get_state();
+	const blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+	console.log("download_maze called");
+	const href = URL.createObjectURL(blob);
+
+	document.getElementById("download_href").href=href
+}
+
 function toggle_end_button() {
 	let end_toggle_button = document.getElementById("put_end");
 	if (mode) {
@@ -324,6 +333,8 @@ document.getElementById("put_end").addEventListener("click", toggle_end_button);
 document.getElementById("reset").addEventListener("click", reset);
 
 document.getElementById("send").addEventListener("click", get_evaluated)
+
+document.getElementById("download").addEventListener("click", download_maze)
 
 // get_evaluated(get_state(), "/evaluate");
 

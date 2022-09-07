@@ -14,4 +14,4 @@ def evaluate():
     sleep(5)
     return jsonify({"score": 56})
 
-app.run(host='10.1.33.215', port=5500, debug=True)
+app.run(host='192.168.77.58', port=5500, debug=True)

@@ -18,18 +18,26 @@
 		<div class="col text-center">
 			<canvas></canvas>
 		</div>
-		<div class="col text-center">
+		<div class="col text-center" style="margin: 2%;">
 			<div class="row">
-				<div class="col">
+				<div class="col m-2">
 					<button type="button" class="btn btn-primary" id="put_end">Set End Position</button>
 				</div>
-				<div class="col">
+				<div class="col m-2">
 					<button type="button" class="btn btn-success" data-bs-toggle="modal"
 						data-bs-target="#exampleModal2">Evaluate</button>
 				</div>
-				<div class="col">
+				<div class="col m-2">
 					<button type="button" class="btn btn-danger" data-bs-toggle="modal"
 						data-bs-target="#exampleModal1">Reset</button>
+				</div>
+			</div>
+			<div class="row">
+				<h3 class="text-center m-2" id="result">Result</h3>
+				<div class="container" >
+					<div class="result">
+						<h1 id="score">Score: NA</h1>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -40,7 +48,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModal1Label">Modal title</h5>
+					<h5 class="modal-title" id="exampleModal1Label">Reset</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -60,7 +68,7 @@
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModal2Label">Modal title</h5>
+					<h5 class="modal-title" id="exampleModal2Label">Evaluate</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">

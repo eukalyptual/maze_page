@@ -235,7 +235,10 @@ function get_state() {
 			edges_[i] = 0;
 		}
 	}
-	return { edges: edges_, end: end };
+	return {
+		edges: edges_,
+		end: end
+	};
 }
 
 function get_evaluated() {
@@ -245,12 +248,17 @@ function get_evaluated() {
 	else {
 		let url = "/evaluate";
 		let dataSend = get_state();
+		let spinner = "Result&emsp;<div class='spinner-border text-success' role='status'><span class='sr-only'></span></div>";
+		document.getElementById("score").innerHTML = ""
+		document.getElementById("result").innerHTML = spinner;
 		let xml = new XMLHttpRequest();
 		xml.open("POST", url, true);
 		xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		xml.onload = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				console.log(this.responseText);
+				document.getElementById("score").innerHTML = "Score: " + JSON.parse(this.responseText).score;
+				document.getElementById("result").innerHTML = "Result";
 			}
 		}
 		xml.send(JSON.stringify(dataSend));
@@ -263,7 +271,7 @@ function toggle_end_button() {
 		end_toggle_button.innerHTML = "Set End Position";
 	}
 	else {
-		end_toggle_button.innerHTML = "&emsp;Put Barriers&emsp;";
+		end_toggle_button.innerHTML = "Put More Barriers";
 	}
 	mode = !mode
 }

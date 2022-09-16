@@ -1,1 +1,3 @@
 faltu
+*.json
+__pycache__

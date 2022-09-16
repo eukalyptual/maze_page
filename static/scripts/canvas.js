@@ -3,9 +3,6 @@ var mazeX = 10;
 var mazeY = 10;
 var ca = Math.min(window.innerHeight, window.innerWidth) * 0.8
 console.log(ca)
-// if (window.innerWidth < window.innerHeight) {
-// 	ca = window.innerWidth * 0.8
-// }
 
 canvas.width = ca * 1.025;
 canvas.height = ca * 1.025;
@@ -202,9 +199,12 @@ function draw_edges() {
 
 function reset() {
 	c.clearRect(0, 0, ca * 1.025, ca * 1.025);
+	c.fillStyle = "rgba(255, 255, 255, 1)";
+	c.fillRect(0, 0, ca * 1.025, ca * 1.025);
 	vertices = {};
 	edges = {};
 	boxes = {};
+	end = "";
 	start_box();
 	draw_guide_boxes_vertices(true);
 	draw_edges();
@@ -226,7 +226,7 @@ function rebuild() {
 }
 
 function get_state() {
-	edges_ = {};
+	let edges_ = {};
 	for (var i in edges) {
 		if (edges[i].show) {
 			edges_[i] = 1;
@@ -243,7 +243,7 @@ function get_state() {
 
 function get_evaluated() {
 	if (end == "") {
-		alert("You need to set an end point before submission!");
+		alert("You need to set an end position before submission!");
 	}
 	else {
 		let url = "/evaluate";

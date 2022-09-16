@@ -1,18 +1,3 @@
-def digest_data(data):
-    # digest data
-    pass
-
- 
-
-
-
-
-
-
-
-
-
-
 class Node:
     def __init__(self, x, y):
         self.x = x
@@ -21,129 +6,83 @@ class Node:
         self.down = None
         self.left = None
         self.right = None
+        self.isvisited = False
+
+    def __repr__(self):
+        rep = [self.x,self.y]
+        if self.up != None:
+            rep.append("up")
+        if self.down != None:
+            rep.append("down")
+        if self.left != None:
+            rep.append("left")
+        if self.right != None:
+            rep.append("right")
+        return str(rep)
+
+    def remextra(self):
+        if self.up!= None and self.up.up!= None:
+            if self.up.right==None and self.up.left==None:
+                self.up = self.up.up
+        if self.down!= None and self.down.down!= None:
+            if self.down.right==None and self.down.left==None:
+                self.down = self.down.down
+        if self.left!= None and self.left.left!= None:
+            if self.left.up==None and self.left.down==None:
+                self.left = self.left.left
+        if self.right!= None and self.right.right!= None:
+            if self.right.up==None and self.right.down==None:
+                self.right = self.right.right
+
+    def rec_print(self,dir):
+        #dir is the direction in which one travels to get to next node
+        if self.isvisited == False:
+            print(self)
+            self.isvisited=True
+            if self.up!= None and dir!='down':
+                self.up.rec_print('up')
+            if self.down!= None and dir!='up':
+                self.down.rec_print('down')
+            if self.left!= None and dir!='right':
+                self.left.rec_print('left')
+            if self.right!= None and dir!='left':
+                self.right.rec_print('right')
 
 class Graph:
     def __init__(self, info):
         self.start = None
         self.info = info
         self.nodes = []
+
+# nlist = [node,...]
+def nodelist(n):
+    nlist = [Node(i,j) for i in range(n) for j in range(n)]
+    return nlist
+
+# jsondata = dict{"edges":dict{"positionPosition": 1/0}, 'end':"position"}
+def connect_node(n,nlist,jsondata):
+    for node in nlist:
+        x,y = node.x,node.y
+        if jsondata["edges"]["E[V_"+str(x)+'_'+str(y)+"][V_"+str(x+1)+'_'+str(y)+']'] == 0:
+            node.up = nlist[n*x+y-1]
+        if jsondata["edges"]["E[V_"+str(x)+'_'+str(y)+"][V_"+str(x)+'_'+str(y+1)+']'] == 0:
+            node.left = nlist[n*(x-1)+y]
+        if jsondata["edges"]["E[V_"+str(x)+'_'+str(y+1)+"][V_"+str(x+1)+'_'+str(y+1)+']'] == 0:
+            node.down = nlist[n*x+y+1]
+        if jsondata["edges"]["E[V_"+str(x+1)+'_'+str(y)+"][V_"+str(x+1)+'_'+str(y+1)+']'] == 0:
+            node.right = nlist[n*(x+1)+y]
+
+def rem_extra_node(nlist):
+    for node in nlist:
+        node.remextra()
         
-    def send(ver):
-        if ver.up and ver.down and ver.right and ver.left==None:
-            back()
-        c=shuffle()
-        if c=="up":
-            Up(ver)
-        if c=="down":
-            Down(ver)
-        if c=="right":
-            Right(ver)
-        if c=="left":
-            Left(ver)      
-    
-    def Up(ver):
-        if ver==end:
-            return true
-        if ver.up!=None:
-            if ver.isvisited and ver.up.isvisited==false:
-                ver.isvisited==true
-                ver.up.isvisited=true
-                Up(ver.up)
-            if ver.isvisited==true and ver.up.isvisited==false:
-                ver.up.isvisited=true
-                Up(ver.up)
-            if ver.isvisted==false and ver.up.isvisited==true:
-                ver.isvisited==true
-                send(ver)
-            if ver.isviisted==true and ver.up.isvisited==true:
-                if  ver.down and ver.right and ver.left==None:
-                    send(ver.up)
-                else:
-                    send(ver)
-        
-        if ver.up==None:
-            if ver.isvisited==true:
-                send(ver)
-            if ver.isvisited==false:
-                ver.isvisited==true
-                send(ver)     
-        
-    def Down(ver):
-        if ver=end:
-            return true
-        if ver.down!=None:
-            if ver.isvisited and ver.down.isvisited==false:
-                ver.isvisited==true
-                ver.down.isvisited=true
-                Down(ver.down)
-            if ver.isvisited==true and ver.down.isvisited==false:
-                ver.down.isvisited=true
-                Down(ver.down)
-            if ver.isvisted==false and ver.down.isvisited==true:
-                send(ver)
-            if ver.isviisted==true and ver.down.isvisited==true:
-                if ver.up and ver.left and ver.right:
-                    send(ver.down)
-                else:
-                    send(ver)
-        
-        if ver.down==None:
-            if ver.isvisited==true:
-                send(ver)
-            if ver.isvisited==false:
-                ver.isvisited==true
-                send(ver)
-                
-    def Right(ver):
-        if ver=end:
-            return end
-        if ver.right!=None:
-            if ver.isvisited and ver.right.isvisited==false:
-                ver.isvisited==true
-                ver.right.isvisited=true
-                Right(ver.right)
-            if ver.isvisited==true and ver.right.isvisited==false:
-                ver.right.isvisited=true
-                Right(ver.right)
-            if ver.isvisted==false and ver.right.isvisited==true:
-                send(ver)
-            if ver.isviisted==true and ver.right.isvisited==true:
-                if ver.left and ver.up and ver.down:
-                    send(ver.right)
-                else:
-                    send(ver)
-        
-        if ver.right==None:
-            if ver.isvisited==true:
-                send(ver)
-            if ver.isvisited==false:
-                ver.isvisited==true
-                send(ver)
-                
-    def Left(ver):
-        if ver=end:
-            return true
-        if ver.left!=None:
-            if ver.isvisited and ver.left.isvisited==false:
-                ver.isvisited==true
-                ver.left.isvisited=true
-                Left(ver.left)
-            if ver.isvisited==true and ver.left.isvisited==false:
-                ver.left.isvisited=true
-                Left(ver.left)
-            if ver.isvisted==false and ver.left.isvisited==true:
-                send(ver)
-            if ver.isviisted==true and ver.left.isvisited==true:
-                if ver.right and ver.up and ver.down:
-                    send(ver.left)
-                else:
-                    send(ver)
-        
-        if ver.left==None:
-            if ver.isvisited==true:
-                send(ver)
-            if ver.isvisited==false:
-                ver.isvisited==true
-                send(ver)
-    
-    # def put
+def resetvisit(nlist):
+    for node in nlist:
+        node.isvisited = False
+
+def digestdata(n,jsondata):
+    nlist = nodelist(n)
+    connect_node(n,nlist,jsondata)
+    for i in range(5):
+        rem_extra_node(nlist)
+    return nlist[0]
